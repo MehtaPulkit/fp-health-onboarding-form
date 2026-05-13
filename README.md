@@ -282,16 +282,38 @@ Current suite: `33` tests across `10` test files.
 
 ## Trade-offs
 
-- The mock auth utility is used directly for the challenge. A production app would wrap it in an API client and handle server-side validation, refresh tokens, telemetry, and retry behavior.
-- Session draft recovery intentionally excludes health and account setup data. This can require re-entry after refresh, but avoids storing sensitive details in browser storage.
-- The dashboard is intentionally simple. It demonstrates protected route behavior and membership summary handoff without becoming a separate product surface.
-- UI components are lightweight custom primitives instead of a heavy design system library.
+- React Hook Form was used as the primary form state solution instead of introducing additional global state management libraries such as Redux or Zustand. The onboarding flow is form-centric, and RHF already provides performant, centralized state orchestration with minimal re-renders and strong integration with multi-step workflows.
+
+- `sessionStorage` was intentionally chosen over `localStorage` for onboarding draft recovery so persisted data remains scoped to the active browser session rather than surviving indefinitely across sessions. This provides a better balance between usability and privacy for partially completed onboarding flows.
+
+- Zod was chosen for validation to keep business rules, conditional logic, and TypeScript inference centralized in a single schema layer. This adds some upfront schema verbosity, but improves maintainability, type safety, and consistency across the onboarding flow.
+
+- The mock auth utility is used directly for the challenge. In a production application, this would be abstracted behind an API client with server-side validation, refresh token handling, telemetry, retry behavior, and secure session management.
+
+- Session-based draft recovery intentionally excludes health and account setup data. This can require users to re-enter sensitive information after refresh, but avoids persisting medical or credential data in browser storage.
+
+- The dashboard is intentionally lightweight. It demonstrates protected routing, authenticated user flows, and membership handoff behavior without expanding into a broader member-management product surface.
+
+- UI components are implemented as lightweight reusable primitives rather than introducing a large external design system library. This keeps the bundle smaller, maintains styling consistency, and demonstrates composable component architecture without unnecessary abstraction overhead.
 
 ## What I Would Improve With More Time
 
-- Add Playwright end-to-end tests for keyboard navigation, route protection, and browser refresh behavior.
-- Add backend-backed draft persistence with explicit consent and encryption for any sensitive continuation flow.
-- Add analytics for validation friction, abandoned steps, and submission failures.
-- Add richer dashboard states for membership activation, onboarding review status, and next steps.
-- Add real account creation APIs and token refresh handling.
-- Add server-rendered metadata if this became a public SEO-indexed product surface.
+- Add Playwright end-to-end coverage for critical user journeys such as protected route access, onboarding recovery flows, keyboard navigation, accessibility assertions, and authenticated dashboard behavior.
+
+- Introduce backend-backed draft persistence with explicit user consent, encrypted transport/storage, and server-side ownership validation so onboarding progress can safely continue across devices and sessions without exposing sensitive information in browser storage.
+
+- Expand observability and operational monitoring with analytics and telemetry for validation friction, abandoned onboarding steps, submission failures, and runtime errors to better understand user behavior and improve conversion rates.
+
+- Replace the mock authentication flow with real account creation and session management APIs, including secure HTTP-only cookie handling, refresh token rotation, CSRF protection, and centralized API error handling.
+
+- Add more production-oriented dashboard states such as membership activation progress, onboarding review/pending verification states, facility recommendations, and actionable next steps after registration.
+
+- Introduce API contract testing and MSW-backed integration tests to validate frontend behavior against realistic backend responses without relying solely on mocked utility functions.
+
+- Add stronger resilience patterns such as retry handling, request cancellation, offline-aware form recovery, and centralized error reporting integrations (e.g. Datadog).
+
+- Further evolve the reusable UI primitives into a more complete internal design system with documented component contracts, visual regression testing, and accessibility auditing.
+
+- Add internationalization support and configurable validation/content rules to support expansion into multiple regions and membership programs.
+
+- If the onboarding flow became a public acquisition surface, introduce server-rendered metadata, structured SEO content, and performance-focused optimizations such as route prefetching and image optimization.
