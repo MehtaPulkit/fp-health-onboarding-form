@@ -100,6 +100,23 @@ describe("auth flow", () => {
     expect(await screen.findByRole("heading", { name: /^login$/i })).toBeInTheDocument();
   });
 
+  it("lets unauthenticated signup users navigate to login", async () => {
+    const user = userEvent.setup();
+    renderAuthRoute("/signup");
+
+    expect(
+      await screen.findByRole("heading", {
+        name: /join the fitness revolution/i,
+      }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("link", { name: /^login$/i }));
+
+    expect(
+      await screen.findByRole("heading", { name: /^login$/i }),
+    ).toBeInTheDocument();
+  });
+
   it("redirects authenticated users away from signup", async () => {
     window.localStorage.setItem("auth_token", "mock-token");
     getCurrentUserMock.mockReturnValue({

@@ -1,6 +1,7 @@
 import { AlertCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { lazy, Suspense, useMemo } from "react";
 import { FormProvider } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { BrandLogo } from "../../../components/layout/BrandLogo";
 import { Alert } from "../../../components/ui/Alert";
 import { Button } from "../../../components/ui/Button";
@@ -98,7 +99,7 @@ export function OnboardingFlow() {
   return (
     <FormProvider {...form}>
       <div className="flex flex-1 flex-col gap-6">
-        <header className="grid gap-5 lg:grid-cols-[1fr_320px] lg:items-end">
+        <header className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <BrandLogo className="h-14" />
             <h1 className="mt-2 text-3xl font-bold text-ink sm:text-4xl">
@@ -109,6 +110,15 @@ export function OnboardingFlow() {
               membership.
             </p>
           </div>
+          <p className="text-sm text-slate-600 lg:pb-1 lg:text-right">
+            Already have an account?{" "}
+            <Link
+              className="font-semibold text-brand-700 hover:text-brand-500"
+              to="/login"
+            >
+              Login
+            </Link>
+          </p>
         </header>
 
         <Stepper
